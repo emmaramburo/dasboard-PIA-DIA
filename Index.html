@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vértice · Dashboard de Performance</title>
+<style>
+:root {
+  --bg: #0b0c10;
+  --surf: #13141a;
+  --card: #1a1b22;
+  --card2: #21222c;
+  --border: rgba(255,255,255,0.06);
+  --text: #eef0f6;
+  --muted: #6b7080;
+  --faint: #2a2c38;
+  --pos: #34d399;
+  --neg: #f87171;
+  --warn: #fbbf24;
+  --pia: #6366f1;
+  --pia-glow: rgba(99,102,241,0.15);
+  --dia: #0ea5e9;
+  --dia-glow: rgba(14,165,233,0.15);
+  --accent: var(--pia);
+  --accent-glow: var(--pia-glow);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+/* HEADER */
+.hdr {
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 30px; height: 30px;
+  background: var(--text);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 14px; height: 14px; }
+.brand-text { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
+.brand-sub { font-size: 9px; color: var(--muted); margin-top: 1px; }
+
+/* PAGE TABS */
+.page-tabs {
+  display: flex;
+  background: var(--card);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+.page-tab {
+  padding: 6px 18px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.page-tab:hover { color: var(--text); }
+.page-tab.active { background: var(--accent); color: #fff; }
+.hdr-period { font-size: 11px; color: var(--muted); text-align: right; }
+.hdr-period strong { display: block; color: var(--text); font-size: 12px; }
+
+/* MAIN */
+.main { max-width: 1180px; margin: 0 auto; padding: 24px 28px 60px; }
+@media(max-width:640px) { .main { padding: 16px; } }
+
+/* PAGE SECTIONS */
+.page { display: none; }
+.page.active { display: block; }
+
+/* PRODUCT BADGE */
+.product-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border: 1px solid;
+}
+.product-badge.pia { background: var(--pia-glow); border-color: rgba(99,102,241,0.3); color: var(--pia); }
+.product-badge.dia { background: var(--dia-glow); border-color: rgba(14,165,233,0.3); color: var(--dia); }
+.product-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* DATE SECTION */
+.date-section {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.presets { display: flex; gap: 6px; flex-wrap: wrap; }
+.preset {
+  padding: 5px 13px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.preset:hover { border-color: var(--faint); color: var(--text); }
+.preset.active { background: var(--accent-glow); border-color: var(--accent); color: var(--text); }
+.date-inputs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.date-field { display: flex; flex-direction: column; gap: 2px; }
+.date-field label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.date-field input[type=date] {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 5px 9px;
+  color: var(--text);
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+}
+.date-field input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
+.date-field input[type=date]:focus { border-color: var(--accent); }
+.date-apply {
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: opacity 0.15s;
+}
+.date-apply:hover { opacity: 0.85; }
+.date-note {
+  font-size: 10px;
+  color: var(--warn);
+  padding: 6px 10px;
+  background: rgba(251,191,36,0.07);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 7px;
+  width: 100%;
+  display: none;
+}
+
+/* SECTION LABEL */
+.section-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 600;
+  margin-bottom: 12px;
+  margin-top: 4px;
+}
+
+/* KPI GRID */
+.kpi-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 10px; }
+@media(max-width:800px) { .kpi-row { grid-template-columns: repeat(3,1fr); } }
+@media(max-width:500px) { .kpi-row { grid-template-columns: repeat(2,1fr); } }
+.kpi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.kpi-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; margin-bottom: 8px; }
+.kpi-val { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.kpi-val.pos { color: var(--pos); }
+.kpi-val.neg { color: var(--neg); }
+.kpi-sub { font-size: 10px; color: var(--muted); margin-top: 5px; }
+
+/* SECONDARY METRICS */
+.sec-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 20px; }
+@media(max-width:700px) { .sec-row { grid-template-columns: repeat(2,1fr); } }
+.sec-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.sec-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
+.sec-val { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* FUNNEL */
+.funnel-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+.funnel-svg-box { margin-top: 14px; width: 100%; }
+.funnel-svg-box svg { width: 100%; display: block; }
+
+/* AD TABLE */
+.ad-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.ad-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.ad-hint { font-size: 10px; color: var(--muted); }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 9px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
+  padding: 8px 10px; text-align: left;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; white-space: nowrap; user-select: none;
+}
+th:hover { color: var(--text); }
+th.sorted { color: var(--text); }
+td { font-size: 12px; padding: 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.015); }
+.ad-link { color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+.ad-link:hover { color: var(--accent); }
+.ext-ico { opacity: 0.35; font-size: 10px; }
+.ad-link:hover .ext-ico { opacity: 0.8; }
+.val-pos { color: var(--pos); }
+.val-neg { color: var(--neg); }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="brand">
+    <div class="logo-mark"><svg viewBox="0 0 14 14"><polygon points="7,1 13,13 1,13" fill="#0b0c10"/></svg></div>
+    <div><div class="brand-text">Vértice</div><div class="brand-sub">Dashboard de Performance</div></div>
+  </div>
+  <div class="page-tabs">
+    <button class="page-tab active" onclick="setPage('pia',this)">🤖 Protocolo IA</button>
+    <button class="page-tab" onclick="setPage('dia',this)">💡 Dólares con IA</button>
+  </div>
+  <div class="hdr-period">
+    <strong id="hdr-period-label">—</strong>
+    Meta Ads · Hotmart · UTMify
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ══════════════════════════════ PIA PAGE ══════════════════════════════ -->
+<div class="page active" id="page-pia">
+  <div class="product-badge pia"><span class="dot"></span>Protocolo IA · Marketin-MVO · Campañas PIA</div>
+
+  <!-- DATE -->
+  <div class="date-section">
+    <div class="presets" id="presets-pia">
+      <button class="preset" onclick="setPeriod('7d','pia',this)">Últimos 7 días</button>
+      <button class="preset" onclick="setPeriod('14d','pia',this)">Últimos 14 días</button>
+      <button class="preset active" onclick="setPeriod('jun','pia',this)">Este mes</button>
+      <button class="preset" onclick="setPeriod('may','pia',this)">Mes pasado</button>
+    </div>
+    <div class="date-inputs">
+      <div class="date-field"><label>Desde</label><input type="date" id="pia-from" value="2026-06-01" min="2026-05-01" max="2026-06-07"></div>
+      <span style="color:var(--muted);font-size:12px;margin-top:16px">→</span>
+      <div class="date-field"><label>Hasta</label><input type="date" id="pia-to" value="2026-06-07" min="2026-05-01" max="2026-06-07"></div>
+      <button class="date-apply" onclick="applyDates('pia')">Aplicar</button>
+    </div>
+    <div class="date-note" id="pia-note">⚠ Rango no disponible. Datos: 01/05 – 07/06/2026. Solicitá actualización a Vértice.</div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section-label">Métricas principales</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">Costo por venta</div><div class="kpi-val" id="pia-cpr">—</div><div class="kpi-sub">costo por resultado</div></div>
+    <div class="kpi-card"><div class="kpi-label">Ventas</div><div class="kpi-val pos" id="pia-sales">—</div><div class="kpi-sub">aprobadas</div></div>
+    <div class="kpi-card"><div class="kpi-label">ROAS</div><div class="kpi-val" id="pia-roas">—</div><div class="kpi-sub" id="pia-roas-s">—</div></div>
+    <div class="kpi-card"><div class="kpi-label">Inversión</div><div class="kpi-val" id="pia-spend">—</div><div class="kpi-sub">gasto en ads</div></div>
+    <div class="kpi-card"><div class="kpi-label">Facturación</div><div class="kpi-val" id="pia-rev">—</div><div class="kpi-sub">revenue neto</div></div>
+  </div>
+
+  <!-- SECONDARY -->
+  <div class="section-label" style="margin-top:18px">Métricas secundarias</div>
+  <div class="sec-row">
+    <div class="sec-card"><div class="sec-label">CPM</div><div class="sec-val" id="pia-cpm">—</div></div>
+    <div class="sec-card"><div class="sec-label">CPC Link</div><div class="sec-val" id="pia-cpc">—</div></div>
+    <div class="sec-card"><div class="sec-label">Costo / Visita LP</div><div class="sec-val" id="pia-cplp">—</div></div>
+    <div class="sec-card"><div class="sec-label">Costo / Checkout</div><div class="sec-val" id="pia-cpco">—</div></div>
+  </div>
+
+  <!-- FUNNEL -->
+  <div class="section-label">Embudo de conversión · Meta Ads</div>
+  <div class="funnel-card">
+    <div class="funnel-svg-box">
+      <svg id="svg-pia" viewBox="0 0 1000 190" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
+  <!-- AD TABLE -->
+  <div class="section-label">Performance por anuncio · últimos 14 días</div>
+  <div class="ad-card">
+    <div class="ad-toolbar">
+      <div class="ad-hint">Clickeá el nombre del anuncio para verlo en Facebook Ads Library</div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sort('pia','name')">Anuncio</th>
+            <th onclick="sort('pia','sales')" class="sorted">Ventas ↓</th>
+            <th onclick="sort('pia','roas')">ROAS</th>
+            <th onclick="sort('pia','cpa')">CPA</th>
+            <th onclick="sort('pia','spend')">Gasto</th>
+            <th onclick="sort('pia','rev')">Facturación</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-pia"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ DIA PAGE ══════════════════════════════ -->
+<div class="page" id="page-dia">
+  <div class="product-badge dia"><span class="dot"></span>Dólares con IA · CP2 - [BM3 Pedro] · Campañas DIA</div>
+
+  <!-- DATE -->
+  <div class="date-section">
+    <div class="presets" id="presets-dia">
+      <button class="preset" onclick="setPeriod('7d','dia',this)">Últimos 7 días</button>
+      <button class="preset" onclick="setPeriod('14d','dia',this)">Últimos 14 días</button>
+      <button class="preset active" onclick="setPeriod('jun','dia',this)">Este mes</button>
+      <button class="preset" onclick="setPeriod('may','dia',this)">Mes pasado</button>
+    </div>
+    <div class="date-inputs">
+      <div class="date-field"><label>Desde</label><input type="date" id="dia-from" value="2026-06-01" min="2026-05-01" max="2026-06-07"></div>
+      <span style="color:var(--muted);font-size:12px;margin-top:16px">→</span>
+      <div class="date-field"><label>Hasta</label><input type="date" id="dia-to" value="2026-06-07" min="2026-05-01" max="2026-06-07"></div>
+      <button class="date-apply" onclick="applyDates('dia')">Aplicar</button>
+    </div>
+    <div class="date-note" id="dia-note">⚠ Rango no disponible. Datos: 01/05 – 07/06/2026. Solicitá actualización a Vértice.</div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section-label">Métricas principales</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">Costo por venta</div><div class="kpi-val" id="dia-cpr">—</div><div class="kpi-sub">costo por resultado</div></div>
+    <div class="kpi-card"><div class="kpi-label">Ventas</div><div class="kpi-val pos" id="dia-sales">—</div><div class="kpi-sub">aprobadas</div></div>
+    <div class="kpi-card"><div class="kpi-label">ROAS</div><div class="kpi-val" id="dia-roas">—</div><div class="kpi-sub" id="dia-roas-s">—</div></div>
+    <div class="kpi-card"><div class="kpi-label">Inversión</div><div class="kpi-val" id="dia-spend">—</div><div class="kpi-sub">gasto en ads</div></div>
+    <div class="kpi-card"><div class="kpi-label">Facturación</div><div class="kpi-val" id="dia-rev">—</div><div class="kpi-sub">revenue neto</div></div>
+  </div>
+
+  <!-- SECONDARY -->
+  <div class="section-label" style="margin-top:18px">Métricas secundarias</div>
+  <div class="sec-row">
+    <div class="sec-card"><div class="sec-label">CPM</div><div class="sec-val" id="dia-cpm">—</div></div>
+    <div class="sec-card"><div class="sec-label">CPC Link</div><div class="sec-val" id="dia-cpc">—</div></div>
+    <div class="sec-card"><div class="sec-label">Costo / Visita LP</div><div class="sec-val" id="dia-cplp">—</div></div>
+    <div class="sec-card"><div class="sec-label">Costo / Checkout</div><div class="sec-val" id="dia-cpco">—</div></div>
+  </div>
+
+  <!-- FUNNEL -->
+  <div class="section-label">Embudo de conversión · Meta Ads</div>
+  <div class="funnel-card">
+    <div class="funnel-svg-box">
+      <svg id="svg-dia" viewBox="0 0 1000 190" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
+  <!-- AD TABLE -->
+  <div class="section-label">Performance por anuncio · últimos 14 días</div>
+  <div class="ad-card">
+    <div class="ad-toolbar">
+      <div class="ad-hint">Clickeá el nombre del anuncio para verlo en Facebook Ads Library</div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sort('dia','name')">Anuncio</th>
+            <th onclick="sort('dia','sales')" class="sorted">Ventas ↓</th>
+            <th onclick="sort('dia','roas')">ROAS</th>
+            <th onclick="sort('dia','cpa')">CPA</th>
+            <th onclick="sort('dia','spend')">Gasto</th>
+            <th onclick="sort('dia','rev')">Facturación</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-dia"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ─────────────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const usd = (v, d=2) => v != null && !isNaN(v) ? '$' + Number(v).toFixed(d) : '—';
+const fmt = v => new Intl.NumberFormat('es-AR').format(Math.round(v));
+const pct = (a,b) => b>0 ? (a/b*100).toFixed(1)+'%' : '—';
+
+// ─────────────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────────────
+const PERIODS = { '7d':'Junio (01–07/06)', '14d':'Últ. 14 días (May25–Jun7)', 'jun':'Junio (01–07/06)', 'may':'Mayo (cerrado)' };
+const DATES   = { '7d':['2026-06-01','2026-06-07'], '14d':['2026-05-25','2026-06-07'], 'jun':['2026-06-01','2026-06-07'], 'may':['2026-05-01','2026-05-31'] };
+
+const DATA = {
+  pia: {
+    '7d':  { spend:1697.20, rev:613.10,  roas:0.361, sales:16, pend:0, ref:1, clicks:13284, lp:5821,  check:231, imp:186297, cpm:9.11, cpc:0.128, cplp:0.292, cpco:7.35  },
+    '14d': { spend:3169.80, rev:2148.90, roas:0.678, sales:54, pend:3, ref:5, clicks:20398, lp:9445,  check:469, imp:347864, cpm:9.11, cpc:0.155, cplp:0.336, cpco:6.76  },
+    'jun': { spend:1697.20, rev:613.10,  roas:0.361, sales:16, pend:0, ref:1, clicks:13284, lp:5821,  check:231, imp:186297, cpm:9.11, cpc:0.128, cplp:0.292, cpco:7.35  },
+    'may': { spend:5829.41, rev:5555.64, roas:0.953, sales:137,pend:1, ref:14,clicks:27772, lp:15043, check:1052,imp:640000, cpm:9.11, cpc:0.210, cplp:0.388, cpco:5.54  },
+  },
+  dia: {
+    '7d':  { spend:241.50,  rev:178.20,  roas:0.738, sales:11, pend:1, ref:0, clicks:692,  lp:633,  check:0,  imp:27105,  cpm:8.91, cpc:0.349, cplp:0.381, cpco:null },
+    '14d': { spend:496.20,  rev:261.10,  roas:0.526, sales:18, pend:2, ref:1, clicks:1449, lp:1358, check:0,  imp:55686,  cpm:8.91, cpc:0.342, cplp:0.365, cpco:null },
+    'jun': { spend:241.50,  rev:178.20,  roas:0.738, sales:11, pend:1, ref:0, clicks:692,  lp:633,  check:0,  imp:27105,  cpm:8.91, cpc:0.349, cplp:0.381, cpco:null },
+    'may': { spend:1193.33, rev:461.99,  roas:0.387, sales:31, pend:1, ref:7, clicks:3466, lp:3105, check:10, imp:133932, cpm:8.91, cpc:0.344, cplp:0.384, cpco:119.33},
+  }
+};
+
+const ADS = {
+  pia: [
+    { name:'Abril - AD 01', adId:'120247310203720494', sales:8,  roas:1.12, cpa:35.79, spend:286.29, rev:321.94 },
+    { name:'Abril - AD 01', adId:'120247659821930494', sales:6,  roas:0.82, cpa:49.36, spend:296.18, rev:241.56 },
+    { name:'Abril - AD 01', adId:'120247310203740494', sales:5,  roas:0.99, cpa:41.10, spend:205.50, rev:202.54 },
+    { name:'Abril - AD 05', adId:'120247659821970494', sales:5,  roas:0.44, cpa:91.50, spend:457.49, rev:201.20 },
+    { name:'Abril - AD 05', adId:'120247659821960494', sales:4,  roas:0.69, cpa:58.43, spend:233.71, rev:161.17 },
+    { name:'Oct - Ad 2',    adId:'120239684188450494', sales:2,  roas:1.93, cpa:20.81, spend:41.62,  rev:80.48  },
+    { name:'Abril - AD 01', adId:'120247537463990494', sales:2,  roas:1.68, cpa:24.16, spend:48.32,  rev:81.40  },
+    { name:'Abril - AD 05', adId:'120246942444480494', sales:2,  roas:1.43, cpa:28.17, spend:56.34,  rev:80.46  },
+    { name:'Oct - Ad 6',    adId:'120239684188460494', sales:2,  roas:1.17, cpa:34.57, spend:69.14,  rev:80.55  },
+    { name:'Abril - AD 01', adId:'120245174167310494', sales:2,  roas:1.16, cpa:34.68, spend:69.36,  rev:80.50  },
+    { name:'Abril - AD 01', adId:'120247659821680494', sales:2,  roas:0.84, cpa:47.90, spend:95.79,  rev:80.58  },
+    { name:'Abril - AD 01', adId:'120247659821900494', sales:2,  roas:0.81, cpa:50.58, spend:101.15, rev:81.89  },
+    { name:'Abril - AD 40', adId:'120247292832950494', sales:2,  roas:0.57, cpa:70.58, spend:141.16, rev:80.50  },
+    { name:'Abril - AD 03', adId:'120247659821830494', sales:1,  roas:18.89,cpa:2.13,  spend:2.13,   rev:40.24  },
+    { name:'Abril - AD 48', adId:'120249239252810494', sales:1,  roas:4.74, cpa:8.68,  spend:8.68,   rev:41.16  },
+    { name:'Abril - AD 43', adId:'120249239252780494', sales:1,  roas:4.79, cpa:8.40,  spend:8.40,   rev:40.26  },
+    { name:'Abril - AD 05', adId:'120247659821860494', sales:1,  roas:1.23, cpa:32.76, spend:32.76,  rev:40.24  },
+    { name:'Abril - AD 21', adId:'120246941623120494', sales:1,  roas:0.42, cpa:96.90, spend:96.90,  rev:40.24  },
+  ],
+  dia: [
+    { name:'[10/03] AD 4',     adId:'120245585569250343', sales:5, roas:0.59, cpa:27.11, spend:135.53, rev:80.08 },
+    { name:'[10/03] AD 2',     adId:'120245585569220343', sales:3, roas:1.19, cpa:9.85,  spend:29.54,  rev:35.30 },
+    { name:'E-Ad6-[01/02]',    adId:'120243344644300343', sales:2, roas:0.77, cpa:20.66, spend:41.32,  rev:31.99 },
+    { name:'[10/03] AD 8',     adId:'120245585569240343', sales:2, roas:0.76, cpa:20.91, spend:41.82,  rev:31.98 },
+    { name:'Octubre 5',        adId:'120241324462820343', sales:2, roas:0.46, cpa:34.61, spend:69.21,  rev:31.99 },
+    { name:'[06/05] - Ad 25',  adId:'120246801744220343', sales:1, roas:5.07, cpa:3.16,  spend:3.16,   rev:16.02 },
+    { name:'[06/05] - Ad 21',  adId:'120246801495000343', sales:1, roas:0.46, cpa:34.80, spend:34.80,  rev:15.96 },
+    { name:'[10/03] AD 3',     adId:'120245585569140343', sales:1, roas:0.23, cpa:69.00, spend:69.00,  rev:15.98 },
+  ]
+};
+
+// ─────────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────────
+const state = { pia: { period:'jun', sortKey:'sales', sortDir:-1 }, dia: { period:'jun', sortKey:'sales', sortDir:-1 } };
+let activePage = 'pia';
+
+// ─────────────────────────────────────────────────────
+//  PAGE SWITCHER
+// ─────────────────────────────────────────────────────
+function setPage(page, btn) {
+  document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  $('page-'+page).classList.add('active');
+  activePage = page;
+  const isdia = page === 'dia';
+  document.documentElement.style.setProperty('--accent', isdia ? 'var(--dia)' : 'var(--pia)');
+  document.documentElement.style.setProperty('--accent-glow', isdia ? 'var(--dia-glow)' : 'var(--pia-glow)');
+}
+
+// ─────────────────────────────────────────────────────
+//  PERIOD / DATES
+// ─────────────────────────────────────────────────────
+function setPeriod(key, prod, btn) {
+  document.querySelectorAll(`#presets-${prod} .preset`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state[prod].period = key;
+  $(`${prod}-from`).value = DATES[key][0];
+  $(`${prod}-to`).value   = DATES[key][1];
+  $(`${prod}-note`).style.display = 'none';
+  render(prod);
+}
+
+function applyDates(prod) {
+  const from = $(prod+'-from').value, to = $(prod+'-to').value;
+  if (!from || !to) return;
+  document.querySelectorAll(`#presets-${prod} .preset`).forEach(b => b.classList.remove('active'));
+  const match = Object.entries(DATES).find(([k,v]) => v[0]===from && v[1]===to);
+  if (match) {
+    state[prod].period = match[0];
+    const labels = {'7d':'7','14d':'14','jun':'Este','may':'Mes'};
+    document.querySelectorAll(`#presets-${prod} .preset`).forEach(b => {
+      if (b.textContent.includes(labels[match[0]]||'X')) b.classList.add('active');
+    });
+    $(`${prod}-note`).style.display = 'none';
+    render(prod);
+  } else {
+    $(`${prod}-note`).style.display = 'block';
+  }
+}
+
+// ─────────────────────────────────────────────────────
+//  FUNNEL — single fluid Catmull-Rom shape
+// ─────────────────────────────────────────────────────
+function drawFunnel(svgId, d, colorStart, colorEnd) {
+  const svg = $(svgId);
+  svg.innerHTML = '';
+  const ns = 'http://www.w3.org/2000/svg';
+  const mk = (tag, a) => { const el=document.createElementNS(ns,tag); Object.entries(a).forEach(([k,v])=>el.setAttribute(k,v)); return el; };
+
+  const W = 1000, H = 190;
+  const padX = 70, padTop = 26, padBot = 32;
+  const bodyH = H - padTop - padBot;
+  const cy = padTop + bodyH / 2;
+  const maxH = bodyH / 2;
+  const minH = 1.5; // minimum half-height so thin stages are visible
+
+  const stages = [
+    { label:'Clics',        n: d.clicks },
+    { label:'Vis. Página',  n: d.lp     },
+    { label:'ICs',          n: d.check  },
+    { label:'Ventas Inic.', n: d.sales + (d.pend||0) },
+    { label:'Ventas Apr.',  n: d.sales  },
+  ];
+
+  const maxN = Math.max(stages[0].n || 1, 1);
+  const xs = stages.map((_, i) => padX + i * (W - 2*padX) / (stages.length - 1));
+  const hs = stages.map(s => Math.max((s.n / maxN) * maxH, minH));
+
+  // Catmull-Rom to cubic bezier
+  function catmullPath(pts) {
+    let d = `M ${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i-1)];
+      const p1 = pts[i];
+      const p2 = pts[i+1];
+      const p3 = pts[Math.min(pts.length-1, i+2)];
+      const alpha = 0.5; // tension
+      const cp1x = p1.x + (p2.x - p0.x) * alpha / 3;
+      const cp1y = p1.y + (p2.y - p0.y) * alpha / 3;
+      const cp2x = p2.x - (p3.x - p1.x) * alpha / 3;
+      const cp2y = p2.y - (p3.y - p1.y) * alpha / 3;
+      d += ` C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}`;
+    }
+    return d;
+  }
+
+  const topPts = xs.map((x, i) => ({ x, y: cy - hs[i] }));
+  const botPts = xs.map((x, i) => ({ x, y: cy + hs[i] }));
+
+  // Build closed path: top curve → right cap → bottom curve reversed → close
+  const topPath = catmullPath(topPts);
+  const botRev  = catmullPath([...botPts].reverse());
+  const lastBot = botPts[botPts.length - 1];
+  const fullPath = topPath
+    + ` L ${lastBot.x.toFixed(2)},${lastBot.y.toFixed(2)}`
+    + botRev.replace(/^M[\d.,\- ]+/, ' L ' + lastBot.x.toFixed(2) + ',' + (cy + hs[hs.length-1]).toFixed(2))
+    + ' Z';
+
+  // Gradient (horizontal)
+  const defs = mk('defs', {});
+  const gId = 'g' + svgId;
+  const grad = mk('linearGradient', { id: gId, x1:'0', y1:'0', x2:String(W), y2:'0', gradientUnits:'userSpaceOnUse' });
+  [
+    [0,   colorStart, '1'],
+    [0.4, colorStart, '0.9'],
+    [0.75,colorEnd,   '0.85'],
+    [1,   colorEnd,   '0.5'],
+  ].forEach(([off, col, op]) => {
+    const s = mk('stop', { offset: String(off*100)+'%', 'stop-color':col, 'stop-opacity':op });
+    grad.appendChild(s);
+  });
+  defs.appendChild(grad);
+  svg.appendChild(defs);
+
+  // Draw shape
+  const shape = mk('path', { d: fullPath, fill: `url(#${gId})` });
+  svg.appendChild(shape);
+
+  // Subtle inner highlight (top edge glow)
+  const highlight = mk('path', { d: catmullPath(topPts), fill:'none', stroke:'rgba(255,255,255,0.18)', 'stroke-width':'1' });
+  svg.appendChild(highlight);
+
+  // Divider lines between stages
+  stages.forEach((_, i) => {
+    if (i > 0 && i < stages.length - 1) {
+      const x = xs[i];
+      const top = cy - hs[i] - 10;
+      const bot = cy + hs[i] + 10;
+      const line = mk('line', { x1:x, y1:top, x2:x, y2:bot, stroke:'rgba(255,255,255,0.12)', 'stroke-width':'1', 'stroke-dasharray':'3 4' });
+      svg.appendChild(line);
+    }
+  });
+
+  // Labels + values
+  stages.forEach((st, i) => {
+    const x = xs[i];
+    const h = hs[i];
+    const pctVal = (st.n / maxN * 100).toFixed(1) + '%';
+
+    // Stage label top
+    const lbl = mk('text', { x, y:16, 'text-anchor':'middle', 'font-family':'-apple-system,sans-serif', 'font-size':'11.5', fill:'#8a90a0', 'font-weight':'500' });
+    lbl.textContent = st.label;
+    svg.appendChild(lbl);
+
+    // % — inside the shape if tall enough, otherwise just above
+    if (h > 14) {
+      const pt = mk('text', { x, y: cy + 5, 'text-anchor':'middle', 'font-family':'-apple-system,sans-serif', 'font-size':'13', fill:'#ffffff', 'font-weight':'700' });
+      pt.textContent = pctVal;
+      svg.appendChild(pt);
+    } else {
+      const pt = mk('text', { x, y: cy - h - 8, 'text-anchor':'middle', 'font-family':'-apple-system,sans-serif', 'font-size':'10', fill: colorEnd, 'font-weight':'700' });
+      pt.textContent = pctVal;
+      svg.appendChild(pt);
+    }
+
+    // Absolute count bottom
+    const nt = mk('text', { x, y: H - 4, 'text-anchor':'middle', 'font-family':'-apple-system,sans-serif', 'font-size':'11', fill:'#5a6070' });
+    nt.textContent = fmt(st.n);
+    svg.appendChild(nt);
+  });
+}
+
+// ─────────────────────────────────────────────────────
+//  AD TABLE
+// ─────────────────────────────────────────────────────
+function sort(prod, key) {
+  const s = state[prod];
+  if (s.sortKey === key) s.sortDir *= -1;
+  else { s.sortKey = key; s.sortDir = key === 'name' ? 1 : -1; }
+  document.querySelectorAll(`#page-${prod} th`).forEach(th => {
+    const k = th.getAttribute('onclick')?.match(/sort\('\w+','(\w+)'\)/)?.[1];
+    th.classList.toggle('sorted', k === key);
+    th.textContent = th.textContent.replace(/ [↑↓]$/,'') + (k === key ? (s.sortDir < 0 ? ' ↓' : ' ↑') : '');
+  });
+  renderTable(prod);
+}
+
+function renderTable(prod) {
+  const s = state[prod];
+  const rows = [...ADS[prod]].sort((a, b) => {
+    const av = a[s.sortKey] ?? (s.sortDir < 0 ? -Infinity : Infinity);
+    const bv = b[s.sortKey] ?? (s.sortDir < 0 ? -Infinity : Infinity);
+    return s.sortDir * (typeof av === 'string' ? av.localeCompare(bv) : bv - av);
+  });
+  const tbody = $(`tbody-${prod}`);
+  tbody.innerHTML = '';
+  rows.forEach(ad => {
+    const link = `https://www.facebook.com/ads/library/?id=${ad.adId}`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><a class="ad-link" href="${link}" target="_blank" rel="noopener">${ad.name}<span class="ext-ico">↗</span></a></td>
+      <td class="${ad.sales > 0 ? 'val-pos' : ''}">${ad.sales}</td>
+      <td class="${ad.roas >= 1 ? 'val-pos' : ad.roas >= 0.7 ? '' : 'val-neg'}">${ad.roas.toFixed(2)}x</td>
+      <td>${ad.cpa > 0 ? usd(ad.cpa) : '—'}</td>
+      <td>${usd(ad.spend)}</td>
+      <td>${usd(ad.rev)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ─────────────────────────────────────────────────────
+//  RENDER KPIs
+// ─────────────────────────────────────────────────────
+function render(prod) {
+  const d = DATA[prod][state[prod].period];
+  const pfx = prod;
+
+  $(pfx+'-cpr').textContent = d.sales > 0 ? usd(d.spend / d.sales) : '—';
+  $(pfx+'-cpr').className = 'kpi-val';
+  $(pfx+'-sales').textContent = fmt(d.sales);
+  $(pfx+'-roas').textContent = d.roas.toFixed(2) + 'x';
+  $(pfx+'-roas').className = 'kpi-val ' + (d.roas >= 1 ? 'pos' : 'neg');
+  $(pfx+'-roas-s').textContent = d.roas >= 1 ? '≥ break-even ✓' : '< break-even';
+  $(pfx+'-spend').textContent = usd(d.spend);
+  $(pfx+'-spend').className = 'kpi-val';
+  $(pfx+'-rev').textContent = usd(d.rev);
+  $(pfx+'-rev').className = 'kpi-val';
+
+  $(pfx+'-cpm').textContent  = usd(d.cpm);
+  $(pfx+'-cpc').textContent  = usd(d.cpc, 3);
+  $(pfx+'-cplp').textContent = usd(d.cplp, 3);
+  $(pfx+'-cpco').textContent = d.cpco ? usd(d.cpco) : '—';
+
+  $('hdr-period-label').textContent = PERIODS[state[prod].period];
+
+  // Always draw funnel from 14d data (most stable view)
+  const fd = DATA[prod]['14d'];
+  if (prod === 'pia') drawFunnel('svg-pia', fd, '#3b82f6', '#8b5cf6');
+  else                drawFunnel('svg-dia', fd, '#0ea5e9', '#6366f1');
+
+  renderTable(prod);
+}
+
+// ─────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────
+render('pia');
+render('dia');
+</script>
+</body>
+</html>
