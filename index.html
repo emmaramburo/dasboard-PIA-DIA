@@ -113,9 +113,9 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
     <div class="di">
-      <div class="df"><label>Desde</label><input type="date" id="p-from" value="2026-06-01" min="2026-05-01" max="2026-06-14"></div>
+      <div class="df"><label>Desde</label><input type="date" id="p-from" value="2026-06-01" min="2026-05-01" max="2026-06-15"></div>
       <span class="dsep">→</span>
-      <div class="df"><label>Hasta</label><input type="date" id="p-to" value="2026-06-14" min="2026-05-01" max="2026-06-14"></div>
+      <div class="df"><label>Hasta</label><input type="date" id="p-to" value="2026-06-15" min="2026-05-01" max="2026-06-15"></div>
       <button class="dbtn" onclick="apply('pia')">Aplicar</button>
     </div>
     <div class="range-info" id="p-info"></div>
@@ -169,9 +169,9 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
     <div class="di">
-      <div class="df"><label>Desde</label><input type="date" id="d-from" value="2026-06-01" min="2026-05-01" max="2026-06-14"></div>
+      <div class="df"><label>Desde</label><input type="date" id="d-from" value="2026-06-01" min="2026-05-01" max="2026-06-15"></div>
       <span class="dsep">→</span>
-      <div class="df"><label>Hasta</label><input type="date" id="d-to" value="2026-06-14" min="2026-05-01" max="2026-06-14"></div>
+      <div class="df"><label>Hasta</label><input type="date" id="d-to" value="2026-06-15" min="2026-05-01" max="2026-06-15"></div>
       <button class="dbtn" onclick="apply('dia')">Aplicar</button>
     </div>
     <div class="range-info" id="d-info"></div>
@@ -225,9 +225,10 @@ const SEGS = {
     {f:'2026-05-29',t:'2026-05-31', spend:618.59,  rev:484.38,  sales:12, pend:0, ref:1,  clicks:2975,  lp:1567,  check:104},
     {f:'2026-06-01',t:'2026-06-01', spend:227.74,  rev:80.46,   sales:2,  pend:0, ref:0,  clicks:2147,  lp:969,   check:31},
     {f:'2026-06-02',t:'2026-06-07', spend:1840.97, rev:1452.49, sales:36, pend:3, ref:1,  clicks:13166, lp:5736,  check:225},
-    {f:'2026-06-08',t:'2026-06-08', spend:130.31,  rev:0,       sales:0,  pend:0, ref:0,  clicks:735,   lp:405,   check:15},
-    {f:'2026-06-09',t:'2026-06-13', spend:741.13,  rev:765.35,  sales:19, pend:0, ref:0,  clicks:2990,  lp:1686,  check:84},
+    {f:'2026-06-08',t:'2026-06-08', spend:434.63,  rev:322.65,  sales:8,  pend:0, ref:0,  clicks:2250,  lp:1113,  check:53},
+    {f:'2026-06-09',t:'2026-06-13', spend:436.81,  rev:442.70,  sales:11, pend:0, ref:0,  clicks:1475,  lp:978,   check:46},
     {f:'2026-06-14',t:'2026-06-14', spend:0,       rev:0,       sales:0,  pend:0, ref:0,  clicks:0,     lp:0,     check:0},
+    {f:'2026-06-15',t:'2026-06-15', spend:0,       rev:0,       sales:0,  pend:0, ref:0,  clicks:0,     lp:0,     check:0},
   ],
   dia: [
     {f:'2026-05-01',t:'2026-05-07', spend:319.17,  rev:71.47,   sales:6,  pend:0, ref:1, clicks:969,  lp:839,  check:4},
@@ -237,9 +238,10 @@ const SEGS = {
     {f:'2026-05-29',t:'2026-05-31', spend:98.47,   rev:35.34,   sales:3,  pend:0, ref:0, clicks:276,  lp:256,  check:0},
     {f:'2026-06-01',t:'2026-06-01', spend:43.20,   rev:32.02,   sales:2,  pend:0, ref:0, clicks:148,  lp:126,  check:0},
     {f:'2026-06-02',t:'2026-06-07', spend:200.97,  rev:160.11,  sales:10, pend:1, ref:0, clicks:544,  lp:503,  check:0},
-    {f:'2026-06-08',t:'2026-06-08', spend:11.28,   rev:15.98,   sales:1,  pend:0, ref:0, clicks:47,   lp:41,   check:0},
-    {f:'2026-06-09',t:'2026-06-13', spend:224.40,  rev:144.50,  sales:9,  pend:1, ref:2, clicks:698,  lp:623,  check:1},
+    {f:'2026-06-08',t:'2026-06-08', spend:37.35,   rev:15.98,   sales:1,  pend:0, ref:0, clicks:115,  lp:100,  check:0},
+    {f:'2026-06-09',t:'2026-06-13', spend:159.76,  rev:112.31,  sales:7,  pend:0, ref:2, clicks:509,  lp:461,  check:1},
     {f:'2026-06-14',t:'2026-06-14', spend:38.57,   rev:32.19,   sales:2,  pend:1, ref:0, clicks:121,  lp:103,  check:0},
+    {f:'2026-06-15',t:'2026-06-15', spend:5.61,    rev:16.30,   sales:1,  pend:0, ref:0, clicks:14,   lp:10,   check:0},
   ]
 };
 
@@ -324,10 +326,10 @@ function compute(prod, fromStr, toStr) {
 
 // ── PRESET DATES ──────────────────────────────────────────
 const PRESETS = {
-  hoy: ()=>{ const t='2026-06-14'; return [t,t]; },
-  '7d':()=>['2026-06-08','2026-06-14'],
-  '14d':()=>['2026-06-01','2026-06-14'],
-  jun: ()=>['2026-06-01','2026-06-14'],
+  hoy: ()=>{ const t='2026-06-15'; return [t,t]; },
+  '7d':()=>['2026-06-09','2026-06-15'],
+  '14d':()=>['2026-06-02','2026-06-15'],
+  jun: ()=>['2026-06-01','2026-06-15'],
   may: ()=>['2026-05-01','2026-05-31'],
 };
 
