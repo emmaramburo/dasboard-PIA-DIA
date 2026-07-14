@@ -114,9 +114,9 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
     <div class="di">
-      <div class="df"><label>Desde</label><input type="date" id="p-from" value="2026-07-01" min="2026-05-01" max="2026-07-11"></div>
+      <div class="df"><label>Desde</label><input type="date" id="p-from" value="2026-07-01" min="2026-05-01" max="2026-07-14"></div>
       <span class="dsep">→</span>
-      <div class="df"><label>Hasta</label><input type="date" id="p-to" value="2026-07-11" min="2026-05-01" max="2026-07-11"></div>
+      <div class="df"><label>Hasta</label><input type="date" id="p-to" value="2026-07-14" min="2026-05-01" max="2026-07-14"></div>
       <button class="dbtn" onclick="apply('pia')">Aplicar</button>
     </div>
     <div class="range-info" id="p-info"></div>
@@ -171,9 +171,9 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
     <div class="di">
-      <div class="df"><label>Desde</label><input type="date" id="d-from" value="2026-07-01" min="2026-05-01" max="2026-07-11"></div>
+      <div class="df"><label>Desde</label><input type="date" id="d-from" value="2026-07-01" min="2026-05-01" max="2026-07-14"></div>
       <span class="dsep">→</span>
-      <div class="df"><label>Hasta</label><input type="date" id="d-to" value="2026-07-11" min="2026-05-01" max="2026-07-11"></div>
+      <div class="df"><label>Hasta</label><input type="date" id="d-to" value="2026-07-14" min="2026-05-01" max="2026-07-14"></div>
       <button class="dbtn" onclick="apply('dia')">Aplicar</button>
     </div>
     <div class="range-info" id="d-info"></div>
@@ -233,6 +233,8 @@ const SEGS = {
     {f:'2026-06-16',t:'2026-06-30', spend:1118.53, rev:487.21,  sales:14, pend:0, ref:8,  clicks:3831,  lp:1899,  check:148},
     {f:'2026-07-01',t:'2026-07-10', spend:720.96,  rev:284.90,  sales:7,  pend:0, ref:0,  clicks:2177,  lp:1489,  check:102},
     {f:'2026-07-11',t:'2026-07-11', spend:29.05,   rev:0,       sales:0,  pend:0, ref:0,  clicks:86,    lp:27,    check:5},
+    {f:'2026-07-12',t:'2026-07-13', spend:53.21,   rev:38.04,   sales:1,  pend:0, ref:0,  clicks:207,   lp:142,   check:4},
+    {f:'2026-07-14',t:'2026-07-14', spend:6.94,    rev:0,       sales:0,  pend:0, ref:0,  clicks:23,    lp:17,    check:0},
   ],
   dia: [
     {f:'2026-05-01',t:'2026-05-07', spend:319.17,  rev:71.47,   sales:6,  pend:0, ref:1, clicks:969,  lp:839,  check:4},
@@ -248,6 +250,8 @@ const SEGS = {
     {f:'2026-06-16',t:'2026-06-30', spend:876.43,  rev:502.47,  sales:33, pend:4, ref:5, clicks:2456, lp:2139, check:0},
     {f:'2026-07-01',t:'2026-07-10', spend:615.76,  rev:226.92,  sales:14, pend:0, ref:2, clicks:1376, lp:1179, check:0},
     {f:'2026-07-11',t:'2026-07-11', spend:24.32,   rev:0,       sales:0,  pend:0, ref:0, clicks:48,   lp:37,   check:0},
+    {f:'2026-07-12',t:'2026-07-13', spend:118.44,  rev:63.33,   sales:4,  pend:1, ref:1, clicks:331,  lp:290,  check:0},
+    {f:'2026-07-14',t:'2026-07-14', spend:10.80,   rev:0,       sales:0,  pend:0, ref:0, clicks:19,   lp:13,   check:0},
   ]
 };
 
@@ -332,10 +336,10 @@ function compute(prod, fromStr, toStr) {
 
 // ── PRESET DATES ──────────────────────────────────────────
 const PRESETS = {
-  hoy: ()=>{ const t='2026-07-11'; return [t,t]; },
-  '7d':()=>['2026-07-05','2026-07-11'],
-  '14d':()=>['2026-06-28','2026-07-11'],
-  jul: ()=>['2026-07-01','2026-07-11'],
+  hoy: ()=>{ const t='2026-07-14'; return [t,t]; },
+  '7d':()=>['2026-07-08','2026-07-14'],
+  '14d':()=>['2026-07-01','2026-07-14'],
+  jul: ()=>['2026-07-01','2026-07-14'],
   jun: ()=>['2026-06-01','2026-06-30'],
   may: ()=>['2026-05-01','2026-05-31'],
 };
@@ -498,8 +502,8 @@ function renderTable(prod){
 }
 
 // ── INIT ──────────────────────────────────────────────────
-renderMetrics('pia','2026-07-01','2026-07-11',true);
-renderMetrics('dia','2026-07-01','2026-07-11',true);
+renderMetrics('pia','2026-07-01','2026-07-14',true);
+renderMetrics('dia','2026-07-01','2026-07-14',true);
 </script>
 </body>
 </html>
